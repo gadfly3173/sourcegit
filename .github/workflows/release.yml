@@ -47,3 +47,7 @@ jobs:
           TAG: ${{ github.ref_name }}
           VERSION: ${{ needs.version.outputs.version }}
         run: gh release upload "$TAG" packages/*
+  create-apt-repo:
+    needs: release
+    name: Create APT repository
+    uses: ./.github/workflows/create-apt-repo.yml

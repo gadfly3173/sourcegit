@@ -1,6 +1,7 @@
-name: create-apt-repo
+name: Create APT repository
 
 on:
+  workflow_call:
   release:
     types:
       - published
