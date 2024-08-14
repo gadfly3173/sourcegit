@@ -6,12 +6,15 @@ on:
       SIGNING_KEY:
         description: GPG signing key
         required: true
+      PAT:
+        description: Personal access token
+        required: true
   release:
     types:
       - published
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -31,6 +34,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.PAT }}
           repository: ${{ env.PAGE_REPO }}
           fetch-depth: 0
       - name: Fetch deb packages
