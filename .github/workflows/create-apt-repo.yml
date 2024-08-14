@@ -1,0 +1,54 @@
+name: create-apt-repo
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  REPO_NAME: sourcegit
+  CODENAME: stable
+  COMPONENTS: main
+  ARCHITECTURES: amd64 arm64
+  PAGE_REPO: sourcegit-scm/sourcegit-scm.github.io
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.upload-artifact.outputs.artifact-id }}
+      keyring: ${{ steps.create-apt-repo.outputs.keyring }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.PAGE_REPO }}
+          fetch-depth: 0
+      - name: Fetch deb packages
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: 'sourcegit-scm/sourcegit'
+          version: 'latest'
+          regex: true
+          file: ".*\\.deb"
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: morph027/apt-repo-action@v3
+        id: create-apt-repo
+        with:
+          repo-name: ${{ env.REPO_NAME }}
+          signing-key: ${{ secrets.SIGNING_KEY }}
+          codename: ${{ env.CODENAME }}
+          components: ${{ env.COMPONENTS }}
+          architectures: ${{ env.ARCHITECTURES }}
+      - name: Commit changes
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add .
+          git commit -m "Add new deb packages"
+          git push
