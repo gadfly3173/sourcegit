@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+SOURCE_LIST="/etc/apt/sources.list.d/sourcegit-scm.list"
+REPO_ENTRY="deb [arch=amd64,arm64] https://sourcegit-scm.github.io/sourcegit stable main"
+
+if [ ! -f "$SOURCE_LIST" ]; then
+    echo "$REPO_ENTRY" | sudo tee "$SOURCE_LIST"
+    echo "Source list added: $SOURCE_LIST"
+else
+    echo "Source list already exists: $SOURCE_LIST"
+fi
