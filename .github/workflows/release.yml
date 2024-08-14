@@ -51,3 +51,5 @@ jobs:
     needs: release
     name: Create APT repository
     uses: ./.github/workflows/create-apt-repo.yml
+    secrets:
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}

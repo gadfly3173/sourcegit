@@ -2,6 +2,10 @@ name: Create APT repository
 
 on:
   workflow_call:
+    secrets:
+      SIGNING_KEY:
+        description: GPG signing key
+        required: true
   release:
     types:
       - published
